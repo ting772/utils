@@ -18,18 +18,19 @@ export function getSignal() {
   };
 }
 
+
 /**
  * 深拷贝，未考虑循环引用
  * @param obj 
  * @returns 
  */
-export function deepCopy(obj: any) {
+export function deepCopy(obj: any): any {
   if (["boolean", "number", "string"].includes(typeof obj)) {
     return obj;
   }
   if (isObj(obj)) {
-    let ret = {};
-    for (let key in obj) {
+    let ret = {} as any
+    for (let key in (obj)) {
       if (hasOwn(obj, key)) {
         ret[key] = deepCopy(obj[key]);
       }
@@ -38,7 +39,7 @@ export function deepCopy(obj: any) {
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => deepCopy(item));
+    return obj.map((item: any) => deepCopy(item));
   }
 
   throw Error("不支持非对象，数组，基础类型数据拷贝");
@@ -92,11 +93,11 @@ export function loopNGetResult<T>(cb: (index: number) => T, n: number, ctx?: any
  * @param removedKeys 
  * @returns 
  */
-export function omit(obj: object, removedKeys: string[]) {
-  let ret = {}
+export function omit<T extends object, K extends keyof T>(obj: T, removedKeys: K[]) {
+  let ret = {} as Omit<T, K>
   for (let key in obj) {
-    if (hasOwn(obj, key) && !removedKeys.includes(key)) {
-      ret[key] = obj[key]
+    if (hasOwn(obj, key) && !removedKeys.includes(key as any)) {
+      ((ret as any)[key]) = obj[key]
     }
   }
   return ret
@@ -122,7 +123,7 @@ export function getField(topLevelObj: object, segString?: string) {
   }
   let val: any, segs = segString.split(".");
   try {
-    val = segs.reduce((acc, seg) => {
+    val = segs.reduce((acc: any, seg) => {
       return acc[seg];
     }, topLevelObj);
   } catch { }
@@ -136,7 +137,8 @@ export function getField(topLevelObj: object, segString?: string) {
  */
 export function reqMemo<T>(fn: (...args: string[]) => Promise<T>) {
   let cache = {} as { [key: string]: T }
-  let func = function (...args: string[]) {
+
+  return async function (this: any, ...args: string[]) {
     let key = args.join("_");
     if (cache[key]) {
       console.debug("请求缓存命中：key值", key);
@@ -147,8 +149,6 @@ export function reqMemo<T>(fn: (...args: string[]) => Promise<T>) {
       return res;
     });
   };
-
-  return func;
 }
 
 /**

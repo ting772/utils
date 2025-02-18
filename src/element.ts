@@ -1,12 +1,13 @@
 import { isObj } from "./isType";
-import type { RemoveReadonly } from '../typings/main'
+import type { RemoveReadonly } from './typings/main'
 
+type StyleObj = { [key: string]: string | number }
 /**
  * 将样式对象拼接成style字符串
  * @param obj 样式对象
  * @returns 
  */
-export function styleStr(obj: object) {
+export function styleStr(obj: StyleObj) {
   let str = "";
   for (let key in obj) {
     str += `${key}:${obj[key]};`;
@@ -16,6 +17,8 @@ export function styleStr(obj: object) {
 
 type SingleChildType = string | number | Node
 type ChildType = string | number | Node | SingleChildType[]
+
+
 /**
  * 创建元素
  * @param tag 标签
@@ -23,7 +26,7 @@ type ChildType = string | number | Node | SingleChildType[]
  * @param children 子元素
  * @returns 
  */
-export function createElement(tag: string, { claz, style }: { claz: string | string[]; style: object }, children: ChildType) {
+export function createElement(tag: string, { claz, style }: { claz: string | string[]; style: StyleObj }, children: ChildType) {
   const appendChild = (el: HTMLElement, child: string | number | Node) => {
     let type = typeof child;
     if (type == "string" || type == "number") {
@@ -54,14 +57,22 @@ export function createElement(tag: string, { claz, style }: { claz: string | str
  * @param ele 可绑定事件的目标
  * @param evtname 事件名
  * @param handler 事件处理回调
- * @param needLog 是否需要开启调试打印
+ * @param options 配置
+ * @param options.needLog 是否需要开启调试打印
+ * @param options.immediate 是否立即执行一次handler
  * @returns 
  */
-export function registEvent(ele: EventTarget, evtname: string, handler: EventListener, needLog?: boolean) {
+export function registEvent(ele: EventTarget, evtname: string, handler: EventListener, options?: { needLog?: boolean; immediate?: boolean }) {
+  let { needLog, immediate } = options ?? {}
   if (needLog) {
     console.log(`注册${evtname}事件`);
   }
   ele.addEventListener(evtname, handler);
+
+  if (immediate) {
+    //@ts-ignore
+    handler.call(ele)
+  }
   return () => {
     if (needLog) {
       console.log(`清除${evtname}事件`);
@@ -82,6 +93,7 @@ export function setElement(ele: HTMLElement, styles: { [key: string]: any }, pro
   }
   if (isObj(props)) {
     for (let key in props) {
+      //@ts-ignore
       ele[key] = props[key]
     }
   }

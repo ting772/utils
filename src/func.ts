@@ -3,9 +3,9 @@
  * @param fn 
  * @returns 
  */
-export function memorize<T>(fn: (...args: string[]) => T) {
+export function memorize<T, K>(fn: (...args: string[]) => T) {
   let cache = {} as { [key: string]: T }
-  let func = function (...args: string[]) {
+  let func = function (this: K, ...args: string[]) {
     let key = args.join("_");
     if (cache[key]) {
       console.debug("缓存命中：key值", key);
@@ -38,9 +38,9 @@ export function timeCostASync<T = void>(fn: (done: () => void) => T, label: stri
  * @param  funcs 函数列表
  * @returns 聚合后的func
  */
-export function batch(...funcs: ((...args: any[]) => void)[]) {
+export function batch<K>(...funcs: ((...args: any[]) => void)[]) {
   funcs = funcs.filter(Boolean);
-  return function (...args: any[]) {
+  return function (this: K, ...args: any[]) {
     for (let func of funcs) {
       func.apply(this, args);
     }
@@ -52,9 +52,9 @@ export function batch(...funcs: ((...args: any[]) => void)[]) {
  * @param  funcs
  * @returns 聚合后的func
  */
-export function bailBatch(...funcs: ((...args: any[]) => void)[]) {
+export function bailBatch<K>(...funcs: ((...args: any[]) => void | false)[]) {
   funcs = funcs.filter(Boolean);
-  return function (...args: any[]) {
+  return function (this: K, ...args: any[]) {
     for (let func of funcs) {
       let ret = func.apply(this, args);
       if (ret === false) {
@@ -69,9 +69,9 @@ export function bailBatch(...funcs: ((...args: any[]) => void)[]) {
  * @param funcs
  * @returns 聚合后的func
  */
-export function bailBatchAsync(...funcs: ((...args: any[]) => void)[]) {
+export function bailBatchAsync<K>(...funcs: ((...args: any[]) => Promise<void | false>)[]) {
   funcs = funcs.filter(Boolean);
-  return async function (...args: any[]) {
+  return async function (this: K, ...args: any[]) {
     for (let func of funcs) {
       let ret = await func.apply(this, args);
       if (ret === false) {

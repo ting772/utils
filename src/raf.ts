@@ -1,4 +1,4 @@
-import { Cycle } from '../typings/main'
+import { Cycle } from './typings/main'
 
 /**
  * 在requestAnimationFrame中循环执行回调

@@ -1,4 +1,4 @@
-export function isObj(obj) {
+export function isObj(obj: any) {
   return isType(obj, 'object')
 }
 

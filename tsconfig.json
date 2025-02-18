@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",//打包生成的文件的模块系统
+    "moduleResolution": "node",
+    "declaration": true,//生成声明文件
+    "outDir": "./dist",
+    "strict": true,
+    "noEmitOnError":true,//错误不产生文件
+    // "noEmit": true,//TS不生成编译文件
+  },
+  "include": ["src/**/*.ts"]
+}

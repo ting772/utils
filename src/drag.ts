@@ -1,5 +1,5 @@
 import { setElement } from './element'
-import { Offset } from '../typings/main'
+import { Offset } from './typings/main'
 
 /**
  * 为元素添加拖拽功能

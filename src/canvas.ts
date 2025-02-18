@@ -1,7 +1,7 @@
-import { getAngle, maxAbs } from './math.ts'
-import { arrLast, omit } from './misc.ts'
-import { setElement } from './element.ts'
-import type { Pos, CanvasCtxOptions } from '../typings/main.ts'
+import { getAngle, maxAbs } from './math'
+import { arrLast, omit } from './misc'
+import { setElement } from './element'
+import type { Pos, CanvasCtxOptions } from './typings/main'
 
 /**
  * 画线或者画多线段

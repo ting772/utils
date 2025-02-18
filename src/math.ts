@@ -1,4 +1,4 @@
-import type { Pos, Cycle, PosOffset } from '../typings/main'
+import type { Pos, Cycle, PosOffset } from './typings/main'
 
 /**
  * 设定上下限，如果数字在区域中，返回数字，超出则返回边界值
@@ -27,7 +27,7 @@ export function maxAbs(...args: number[]) {
  * @param threshold 
  * @returns 
  */
-export function looseEqual(v, targetV, threshold = 0.01) {
+export function looseEqual(v: number, targetV: number, threshold = 0.01) {
   return Math.abs(v - targetV) <= threshold;
 }
 
