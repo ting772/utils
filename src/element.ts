@@ -62,7 +62,7 @@ export function createElement(tag: string, { claz, style }: { claz: string | str
  * @param options.immediate 是否立即执行一次handler
  * @returns 
  */
-export function registEvent(ele: EventTarget, evtname: string, handler: EventListener, options?: { needLog?: boolean; immediate?: boolean }) {
+export function registEvent(ele: EventTarget, evtname: string, handler: (e?: Event) => void, options?: { needLog?: boolean; immediate?: boolean }) {
   let { needLog, immediate } = options ?? {}
   if (needLog) {
     console.log(`注册${evtname}事件`);
@@ -70,7 +70,6 @@ export function registEvent(ele: EventTarget, evtname: string, handler: EventLis
   ele.addEventListener(evtname, handler);
 
   if (immediate) {
-    //@ts-ignore
     handler.call(ele)
   }
   return () => {

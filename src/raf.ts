@@ -43,22 +43,27 @@ export function reduceVelocity(v: number, friction: number) {
     : -1 * Math.max(Math.abs(v) - friction, 0);
 }
 
-function dummy(x:any) {
-  return x;
+export enum SpeedDecayType {
+  COLLISION,
+  FRICTION
 }
 
-type UpdateBallVelocityInRectOptions = {
+export enum CollisionSide {
+  TOP,
+  LEFT,
+  BOTTOM,
+  RIGHT
+}
+
+export enum MovingDirection {
+  X,
+  Y
+}
+
+export type UpdateBallVelocityInRectOptions<T extends object> = {
   wBox: [number, number];//[左侧X，右侧X]
   hBox: [number, number];//[上侧y，下侧y]
-  collisionDecayX?: (speedX: number) => number;//球和x方向边界碰撞速度衰减函数
-  collisionDecayY?: (speedY: number) => number;//球和y方向边界碰撞速度衰减函数
-  frictionX?: (speedX: number) => number;//x方向上移动摩擦衰减函数
-  frictionY?: (speedY: number) => number;//y方向上移动摩擦衰减函数
-}
-
-type MovableCycle = Cycle & {
-  vx: number;
-  vy: number;
+  speedDecay?: (obj: T, dir: MovingDirection, type: SpeedDecayType, side?: CollisionSide) => number
 }
 
 /**
@@ -67,38 +72,39 @@ type MovableCycle = Cycle & {
  * @param wBox [左侧X，右侧X]
  * @param hBox [上侧y，下侧y]
  */
-export function updateBallVelocityInRect(ball: MovableCycle, options: UpdateBallVelocityInRectOptions) {
+export function updateBallVelocityInRect<T extends Record<"x" | "y" | "vx" | "vy" | "r", number>>(ball: T, options: UpdateBallVelocityInRectOptions<T>) {
   let {
     wBox,
     hBox,
-    collisionDecayX = dummy,
-    collisionDecayY = dummy,
-    frictionX = dummy,
-    frictionY = dummy,
+    speedDecay
   } = options
   let [w0, w] = wBox;
   let [h0, h] = hBox;
   if (ball.x + ball.r > w) {
     ball.x = w - ball.r;
     ball.vx *= -1;
-    ball.vx = collisionDecayX(ball.vx);
+    if (speedDecay) {
+      ball.vx = speedDecay(ball, MovingDirection.X, SpeedDecayType.COLLISION, CollisionSide.RIGHT);
+    }
   } else if (ball.x - ball.r < w0) {
     ball.x = ball.r + w0;
     ball.vx *= -1;
-    ball.vx = collisionDecayX(ball.vx);
-  } else {
-    ball.vx = frictionX(ball.vx);
+    if (speedDecay) {
+      ball.vx = speedDecay(ball, MovingDirection.X, SpeedDecayType.COLLISION, CollisionSide.LEFT);
+    }
+  } else if (speedDecay) {
+    ball.vx = speedDecay(ball, MovingDirection.X, SpeedDecayType.FRICTION);
   }
 
   if (ball.y + ball.r > h) {
     ball.y = h - ball.r;
     ball.vy *= -1;
-    ball.vy = collisionDecayY(ball.vy);
+    if (speedDecay) ball.vy = speedDecay(ball, MovingDirection.Y, SpeedDecayType.COLLISION, CollisionSide.BOTTOM);
   } else if (ball.y - ball.r < 0) {
     ball.y = ball.r + h0;
     ball.vy *= -1;
-    ball.vy = collisionDecayY(ball.vy);
-  } else {
-    ball.vy = frictionY(ball.vy);
+    if (speedDecay) ball.vy = speedDecay(ball, MovingDirection.Y, SpeedDecayType.COLLISION, CollisionSide.TOP);
+  } else if (speedDecay) {
+    ball.vy = speedDecay(ball, MovingDirection.Y, SpeedDecayType.FRICTION);
   }
 }
