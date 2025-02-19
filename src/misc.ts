@@ -5,16 +5,16 @@ export function hasOwn(obj: object, prop: string) {
   return _hasOwn.call(obj, prop);
 }
 
-export function getSignal() {
-  let success, fail;
-  let p = new Promise((resolve, reject) => {
-    success = resolve;
-    fail = reject;
+export function getSignal<T = any>() {
+  let resolve: (res?: any) => void, reject: (err?: any) => void
+  let p = new Promise<T>((_resolve, _reject) => {
+    resolve = _resolve;
+    reject = _reject;
   });
   return {
     signal: p,
-    success,
-    fail,
+    resolve: resolve!,
+    reject: reject!,
   };
 }
 
