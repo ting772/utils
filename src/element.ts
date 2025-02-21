@@ -86,14 +86,13 @@ export function registEvent(ele: EventTarget, evtname: string, handler: (e?: Eve
  * @param styles 待批量设置的样式对象
  * @param props 待批量设置的属性对象
  */
-export function setElement(ele: HTMLElement, styles: { [key: string]: any }, props?: { [key: string]: any }) {
-  for (let key in styles) {
-    ele.style.setProperty(key, styles[key]);
+export function setElement(ele: HTMLElement, styleObj: { [key: string]: any }, propObj?: { [key: string]: any }) {
+  for (let key in styleObj) {
+    ele.style.setProperty(key, styleObj[key]);
   }
-  if (isObj(props)) {
-    for (let key in props) {
-      //@ts-ignore
-      ele[key] = props[key]
+  if (isObj(propObj)) {
+    for (let key in propObj) {
+      (ele as any)[key] = propObj[key]
     }
   }
   return ele

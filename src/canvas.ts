@@ -132,7 +132,7 @@ export type CoordOptions = {
   ctx: CanvasRenderingContext2D;
   width: number;//canvas宽度
   height: number;//canvas高度
-  canvasProp?: object;//需要批量设置的canvas元素style属性
+  canvasPropsObj?: object;//需要批量设置的canvas元素style属性
   axis?: {
     domain?: [number, number];//x轴取值范围
     range?: [number, number];//y轴取值范围
@@ -140,13 +140,18 @@ export type CoordOptions = {
     xSize?: number;//坐标系X轴宽度
     ySize?: number;//坐标系Y轴高度
   };//x，y轴配置对象
-  labelStyleOptions?: CanvasCtxOptions
 }
 
 export type FnDrawOptions = {
   rate?: number;//采样率
-  style?: CanvasCtxOptions;
-  label?: string | ({ name: string } & CanvasCtxOptions)
+  style?: CanvasCtxOptions;//曲线样式
+  label?: string | ({
+    name: string;
+    pos?: {
+      x: number;
+      y: number;
+    }
+  } & CanvasCtxOptions)
 }
 /**
  * 画二维笛卡尔坐标系
@@ -154,11 +159,11 @@ export type FnDrawOptions = {
  * @returns 
  */
 export function setupCoord(options: CoordOptions) {
-  let { canvas, ctx, width: w, height: h, axis, canvasProp } = options;
+  let { canvas, ctx, width: w, height: h, axis, canvasPropsObj } = options;
 
   canvas.width = w;
   canvas.height = h;
-  setElement(canvas, canvasProp ?? { "background-color": "#000" });
+  setElement(canvas, canvasPropsObj ?? { "background-color": "#000" });
 
   axis = Object.assign({
     styleOptions: {
@@ -251,8 +256,8 @@ export function setupCoord(options: CoordOptions) {
         drawText(
           ctx,
           label.name,
-          { x: labelPos!.ptx, y: labelPos!.pty },
-          { ...defaultLabelStyles, ...omit(label, ["name"]) }
+          label.pos ?? { x: labelPos!.ptx, y: labelPos!.pty },
+          { ...defaultLabelStyles, ...omit(label, ["name", "pos"]) }
         );
       }
     }
