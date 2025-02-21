@@ -53,7 +53,7 @@
   "homepage": "https://github.com/ting772/utils",
   "commit-and-tag-version": {
     "scripts": {
-      "posttag": "git push --follow-tags && npm publish"
+      "posttag": "git push --follow-tags && tsc &&npm publish"
     }
   }
 }
