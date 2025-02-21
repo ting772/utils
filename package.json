@@ -1,7 +1,7 @@
 {
   "name": "@thing772/utils",
   "descriptions": "常用方法封装",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "dist/index.js",
   "types": "dist/index",
   "files": [
