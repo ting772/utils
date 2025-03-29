@@ -18,7 +18,6 @@ export function getSignal<T = any>() {
   };
 }
 
-
 /**
  * 深拷贝，未考虑循环引用
  * @param obj 
@@ -187,4 +186,73 @@ export function swapArrayItem(arr: [], index1: number, index2: number) {
   let temp = arr[index1]
   arr[index1] = arr[index2]
   arr[index2] = temp
+}
+
+/**
+ * 发送一个请求promise，并设置超时计时器，该promise如果在超时范围内resolve则成功，否则失败
+ * @param promise - 请求promise
+ * @param timeout - 超时时间（单位ms）
+ * @returns {promise}
+ */
+export function wait<T>(promise: Promise<T>, timeout: number) {
+  let timer: any
+  return Promise.race([promise.then(res => {
+    clearTimeout(timer)
+    return res
+  }), new Promise((resolve, reject) => {
+    timer = setTimeout(reject, timeout, '超时')
+  })]) as Promise<T>
+}
+
+/**
+ * 模拟随机触发异常
+ */
+export function simulateError<T = any>(error?: T) {
+  if (Math.random() > 0.5) {
+    throw error ?? Error("模拟错误触发")
+  }
+}
+
+/**
+ * 可阅读化方式展示文件大小
+ * @param {number} size - 文件大小（B） 
+ * @param {number} [pres=1] - 展示小数点精度 
+ * @returns {string}
+ */
+export function fileSizeStr(size: number, pres = 1) {
+  const units = [
+    "B",
+    "KiB",
+    "MiB",
+    "GiB",
+    "TiB",
+  ];
+  const exponent = Math.min(
+    Math.floor(Math.log(size) / Math.log(1024)),
+    units.length - 1,
+  );
+  const approx = size / 1024 ** exponent;
+  return exponent === 0
+    ? `${size} 字节`
+    : `${approx.toFixed(pres)} ${units[exponent]}（${size} 字节）`;
+}
+
+/**
+ * 获取今日0时0分0秒的时间戳
+ * @returns {number}
+ */
+export function getTodayTimeStamp() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today.getTime();
+}
+
+let _toString = Object.prototype.toString
+/**
+ * 获取数据的类型
+ * @param {*} obj 
+ * @returns {string} 如object，number，array等
+ */
+export function getType(obj: any) {
+  return _toString.call(obj).slice(8, -1).toLowerCase()
 }

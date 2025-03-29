@@ -2,7 +2,6 @@ import GUI from 'lil-gui';
 
 type GuiInstance = InstanceType<typeof GUI>
 
-
 type OptionType = {
   //参考 https://lil-gui.georgealways.com/#GUI#add 方法参数形式
   value: [unknown, ...unknown[]];
