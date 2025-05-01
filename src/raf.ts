@@ -3,7 +3,7 @@ import { Cycle } from './typings/main'
 /**
  * 在requestAnimationFrame中循环执行回调
  * @param cb 回调,返回false退出循环
- * @returns 
+ * @returns {()=>void} 取消动画回调
  */
 export function rafLoop(cb: (time: number) => void | false) {
   let raf: number;

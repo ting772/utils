@@ -189,7 +189,7 @@ export function swapArrayItem(arr: [], index1: number, index2: number) {
 }
 
 /**
- * 发送一个请求promise，并设置超时计时器，该promise如果在超时范围内resolve则成功，否则失败
+ * 等待promise，并设置超时计时器，如果在超时范围内resolve则成功，否则失败
  * @param promise - 请求promise
  * @param timeout - 超时时间（单位ms）
  * @returns {promise}
@@ -255,4 +255,34 @@ let _toString = Object.prototype.toString
  */
 export function getType(obj: any) {
   return _toString.call(obj).slice(8, -1).toLowerCase()
+}
+
+/**
+ * 生成一个可重复利用元素的数组，并返回它的getter函数
+ * @param {(index:number)=>T} createFn - 元素工厂函数
+ * @returns {(n:number)=>T[]} 执行需要该元素的数量，返回该元素的数组
+ */
+export function reusableArray<T>(createFn: () => T) {
+  let arr = [] as T[]
+
+  function get(count: number) {
+    const diff = count - arr.length
+    if (diff > 0) {
+      arr.push(...loopNGetResult(createFn, diff))
+    } else if (diff < 0) {
+      arr = arr.slice(0, diff)
+    }
+
+    return arr
+  }
+
+  //用于更新已有元素
+  get.update = function (cb: (item: T) => void) {
+    arr.forEach(item => cb(item))
+  }
+
+  get.clear = function () {
+    arr = []
+  }
+  return get
 }

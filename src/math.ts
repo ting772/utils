@@ -175,3 +175,30 @@ export function getMovePt(pt: Pos, offset: PosOffset) {
   movePt(ret, offset);
   return ret;
 }
+
+/**
+ * 判断一个数字是否超出了界限
+ * @param value 被判断的数
+ * @param min 下限
+ * @param max 上限
+ * @returns {boolean} 不在上下限内返回true，否则返回false
+ */
+export function outBounds(value: number, min: number, max: number) {
+  return value < min || value > max
+}
+
+/**
+ * 从给定点pos，沿着direction向量指定的方向，移动length
+ * @param pos - 初始点
+ * @param direction - 移动方向向量
+ * @param length - 沿方向移动的长度
+ * @returns {{x:number;y:number}} 移动后的点
+ */
+export function movePtWithDirection(pos: { x: number; y: number; }, direction: { dx: number; dy: number }, length: number) {
+  const { dx, dy } = direction
+  const len = Math.sqrt(dx ** 2 + dy ** 2)
+  return {
+    x: pos.x + (dx * length / len),
+    y: pos.y + (dy * length / len)
+  }
+}
