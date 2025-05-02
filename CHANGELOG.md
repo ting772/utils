@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.0.9](https://github.com/ting772/utils/compare/v0.0.8...v0.0.9) (2025-05-02)
+
+
+### Features
+
+* 添加一些方法 ([8e56051](https://github.com/ting772/utils/commit/8e560511db0acbd7b4c8e58e175f8cbd02d30642))
+
 ## [0.0.8](https://github.com/ting772/utils/compare/v0.0.7...v0.0.8) (2025-05-01)
 
 
